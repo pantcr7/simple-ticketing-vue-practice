@@ -40,16 +40,17 @@
           v-model="ticketDetails.status"
           :options="statusOptions"
         />
-        Description
+  
+          <span class="text-sm text-gray-600">Description</span>
           <TextEditor
-            ref="editor",
-            label="Description"
+            ref="editor"
             :fixedMenu="true"
             editorClass="prose-sm max-w-none p-2 min-h-28"
             placeholder="Describe your problem..."
-            
             @change="val => ticketDetails.description = val"
+            label="Description"
           />
+     
       </div>
     </template>
   </Dialog>
@@ -69,7 +70,7 @@ const ticketDetails = ref({
   category: "",
   purchase_date: "",
   status: "",
-  description: "",
+  // description: "",
 });
 
 const dialogOptions = {
@@ -114,18 +115,3 @@ function insertTicket() {
 }
 </script>
 
-<style scoped>
-/* Ensure the TextEditor is visible */
-.prose-sm {
-  font-size: 0.875rem;
-}
-.max-w-none {
-  max-width: none;
-}
-.p-2 {
-  padding: 0.5rem;
-}
-.min-h-28 {
-  min-height: 7rem;
-}
-</style>

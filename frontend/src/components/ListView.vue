@@ -1,5 +1,6 @@
 <template>
   <div class="overflow-x-hidden ">
+    <CreateTicket />
     <ListView :options="options" :columns="columns" :rows="rows">
       <template #cell="{ item, row, column }">
         <Badge v-if="column.key === 'status'"
@@ -11,6 +12,7 @@
         <span v-else>{{ item }}</span>
       </template>
     </ListView>
+    <route-view />
   </div>
 </template>
 
@@ -18,6 +20,7 @@
 import { ref, computed, onMounted, watchEffect } from 'vue';
 import { Button, ListView, Dialog, FormControl, Badge } from 'frappe-ui';
 import ticketStore from '@/state/ticketStore';
+import CreateTicket from './CreateTicket.vue';
 
 const ticket = ticketStore;
 
@@ -27,17 +30,21 @@ watchEffect(() => {
 });
 
 const columns = ref([
-  { label: 'Title', key: 'title', width: '200px' },
-  { label: 'Category', key: 'category', width: '200px' },
-  { label: 'Purchase Date', key: 'purchase_date', width: '200px' },
-  { label: 'Status', key: 'status', width: '200px' },
-  { label: 'Description', key: 'description', width: '200px' },
+  { label: 'Title', key: 'title', },
+  { label: 'Category', key: 'category', },
+  { label: 'Purchase Date', key: 'purchase_date',},
+  { label: 'Status', key: 'status', },
+  // { label: 'Description', key: 'description', width: '200px' },
 ]);
 
 const options = ref({
   selectable: false,
   resizeColumn: true,
   showTooltip: true,
+  getRowRoute: (row) => ({ 
+    name: 'detailpage', 
+    params: { 'name': row.name } 
+  }),
   emptyState: {
     title: 'No Tickets found',
     description: 'Create a new record to get started',
@@ -49,7 +56,7 @@ const options = ref({
         console.log('Navigating to new record form...');
       },
     },
-  },
+  }
 });
 
 const rows = computed(() => {
@@ -60,8 +67,6 @@ const rows = computed(() => {
 watchEffect(() => {
   ticket.fetch();
 });
-
-// Fetch data on component mount
 
 
 // Computed property to get the color based on status

@@ -1,9 +1,7 @@
 <template>
 <div class=" w-[1000px] m-auto mt-5">
     <Header />
-    <CreateTicket />
-    <ListView />
-
+    <router-view />
 </div>
 </template>
 
