@@ -40,25 +40,29 @@
           v-model="ticketDetails.status"
           :options="statusOptions"
         />
-        <FormControl
-          type="text"
-          size="sm"
-          variant="subtle"
-          placeholder="description"
-          :disabled="false"
-          label="Description"
-          v-model="ticketDetails.description"
-        />
+        Description
+          <TextEditor
+            ref="editor",
+            label="Description"
+            :fixedMenu="true"
+            editorClass="prose-sm max-w-none p-2 min-h-28"
+            placeholder="Describe your problem..."
+            
+            @change="val => ticketDetails.description = val"
+          />
       </div>
     </template>
   </Dialog>
 </template>
 
 <script setup>
-import { Dialog, FormControl } from 'frappe-ui';
+import { Dialog, FormControl, TextEditor } from 'frappe-ui';
 import { displayDialog } from '@/state/displayDialog';
 import { ref } from 'vue';
-import ListView from './ListView.vue'; // Ensure ListView is correctly imported and used
+
+import ticketStore from '@/state/ticketStore';
+
+const ticket = ticketStore;
 
 const ticketDetails = ref({
   title: "",
@@ -76,7 +80,7 @@ const dialogOptions = {
     {
       label: 'Confirm',
       variant: 'solid',
-      onClick: createTicket,
+      onClick: insertTicket,
     },
   ],
 };
@@ -93,8 +97,8 @@ const statusOptions = [
   { label: 'Closed', value: 'Closed' },
 ];
 
-function createTicket() {
-  ListView.methods.ticket.insert.submit({
+function insertTicket() {
+  ticket.insert.submit({
     title: ticketDetails.value.title,
     category: ticketDetails.value.category,
     purchase_date: ticketDetails.value.purchase_date,
@@ -102,10 +106,26 @@ function createTicket() {
     description: ticketDetails.value.description,
   }).then(() => {
     displayDialog.isDisplay = false;
-    ListView.methods.ticket.fetch(); // Ensure this method exists and is correctly called to refresh the list
+    ticket.fetch(); // Ensure this method exists and is correctly called to refresh the list
   }).catch(error => {
     console.error('Error inserting ticket:', error);
     // Consider adding user feedback here, e.g., a toast notification
   });
 }
 </script>
+
+<style scoped>
+/* Ensure the TextEditor is visible */
+.prose-sm {
+  font-size: 0.875rem;
+}
+.max-w-none {
+  max-width: none;
+}
+.p-2 {
+  padding: 0.5rem;
+}
+.min-h-28 {
+  min-height: 7rem;
+}
+</style>

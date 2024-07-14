@@ -1,21 +1,37 @@
 <template>
-  <div>
-    <ListView :options="options" :columns="columns" :rows="rows" />
+  <div class="overflow-x-hidden ">
+    <ListView :options="options" :columns="columns" :rows="rows">
+      <template #cell="{ item, row, column }">
+        <Badge v-if="column.key === 'status'"
+          :variant="'subtle'"
+          :theme="getStatusColor(row.status)"
+          size="sm"
+          :label="row.status"
+        />
+        <span v-else>{{ item }}</span>
+      </template>
+    </ListView>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted,watchEffect } from 'vue';
-import { Button, ListView, Dialog, FormControl } from 'frappe-ui';
-import { createListResource } from 'frappe-ui';
- // Ensure this import if confetti is used
+import { ref, computed, onMounted, watchEffect } from 'vue';
+import { Button, ListView, Dialog, FormControl, Badge } from 'frappe-ui';
+import ticketStore from '@/state/ticketStore';
+
+const ticket = ticketStore;
+
+// Debugging: Log the ticketStore data
+watchEffect(() => {
+  console.log('ticketStore data:', ticketStore.data);
+});
 
 const columns = ref([
-  { label: 'Title', key: 'title',width: '200px' },
-  { label: 'Category', key: 'category',width: '200px' },
-  { label: 'Purchase Date', key: 'purchase_date',width: '200px' },
-  { label: 'Status', key: 'status',width: '200px' },
-  { label: 'Description', key: 'description',width: '200px' },
+  { label: 'Title', key: 'title', width: '200px' },
+  { label: 'Category', key: 'category', width: '200px' },
+  { label: 'Purchase Date', key: 'purchase_date', width: '200px' },
+  { label: 'Status', key: 'status', width: '200px' },
+  { label: 'Description', key: 'description', width: '200px' },
 ]);
 
 const options = ref({
@@ -36,31 +52,30 @@ const options = ref({
   },
 });
 
-const ticket = createListResource({
-  doctype: 'Support Ticket',
-  fields: ['title', 'category', 'purchase_date', 'status', 'description'],
-  orderBy: 'creation desc',
-  auto: true,
-  insert: {
-    onSuccess: (d) => {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
-    },
-  },
-});
-
 const rows = computed(() => {
   return ticket.data ? ticket.data.map(t => ({ ...t })) : [];
 });
 
-const stopWatch = watchEffect(() => {
-  ticket.fetch()
+// Debugging: Log the computed rows
+watchEffect(() => {
+  ticket.fetch();
 });
 
-onUnmounted(() => {
-  stopWatch(); // Cleanup watchEffect when component unmounts
-});
+// Fetch data on component mount
+
+
+// Computed property to get the color based on status
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'Open':
+      return 'red';
+    case 'Resolved':
+      return 'blue';
+    case 'Closed':
+      return 'green';
+    default:
+      return 'gray';
+  }
+};
+
 </script>
