@@ -14,7 +14,7 @@
           :label="ticketDetails.doc.status"/>
       </div>
       <div>
-        <Button :variant="'solid'" @click="ticketDetails.markAsResolved.submit()" :disabled="ticketDetails.doc.status === 'Resolved'">
+        <Button :variant="'solid'" @click="markAsResolved" :disabled="ticketDetails.doc.status === 'Resolved'">
           Mark as Resolved
         </Button> 
       </div>
@@ -71,11 +71,11 @@ let ticketDetails = createDocumentResource({
 
 console.log('ticketDetails:', ticketDetails);
 
-// const markAsClosed = () => {
-//   ticketDetails.setValue({ status: 'Closed' }).then(() => {
-//     ticketDetails.reload();
-//   });
-// };
+const markAsResolved = () => {
+  ticketDetails.setValue.submit({ status: 'Resolved' }).then(() => {
+    ticketDetails.reload();
+  });
+};
 
 function getFormattedDate(date) {
   return dayjs(date).format('MMMM DD, YYYY');

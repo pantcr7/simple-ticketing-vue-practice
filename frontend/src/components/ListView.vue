@@ -22,12 +22,11 @@ import { Button, ListView, Dialog, FormControl, Badge } from 'frappe-ui';
 import ticketStore from '@/state/ticketStore';
 import CreateTicket from './CreateTicket.vue';
 
-const ticket = ticketStore;
+let ticket = ticketStore;
+ticket.fetch();
 
 // Debugging: Log the ticketStore data
-watchEffect(() => {
-  console.log('ticketStore data:', ticketStore.data);
-});
+
 
 const columns = ref([
   { label: 'Title', key: 'title', },
@@ -63,10 +62,11 @@ const rows = computed(() => {
   return ticket.data ? ticket.data.map(t => ({ ...t })) : [];
 });
 
+
 // Debugging: Log the computed rows
-watchEffect(() => {
-  ticket.fetch();
-});
+// watchEffect(() => {
+//   ticket.fetch();
+// });
 
 
 // Computed property to get the color based on status

@@ -10,4 +10,5 @@ class SupportTicket(Document):
 	def mark_as_resolved(self):
 		self.status = "Resolved"
 		self.save()
+		
 
